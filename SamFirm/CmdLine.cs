@@ -1,10 +1,11 @@
 ﻿namespace SamFirm
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Threading;
-
+    using MySql.Data.MySqlClient;
     internal class CmdLine
     {
         private static bool autodecrypt = false;
@@ -19,6 +20,7 @@
         public static ProgressBarInfo progressBar = new ProgressBarInfo();
         private static string region = string.Empty;
         private static string version = string.Empty;
+        private static SamFirm.Command.Firmware FW;
 
         private static void CreateProgressbar()
         {
@@ -29,7 +31,7 @@
                 spaceArray[0] = '[';
                 spaceArray[spaceArray.Length - 1] = ']';
                 progressBar.Line = Console.CursorTop;
-                Logger.WriteLog(new string(spaceArray), true);
+                //Logger.WriteLog(new string(spaceArray), true);
             }
             catch (IOException)
             {
@@ -39,20 +41,20 @@
 
         private static void DisplayUsage()
         {
-            Logger.WriteLog("Usage:\n", false);
-            Logger.WriteLog("Update check:", false);
-            Logger.WriteLog("     SamFirm.exe -c -model [device model] -region [region code]\n                [-version [pda/csc/phone/data]] [-binary]", false);
-            Logger.WriteLog("\nDecrypting:", false);
-            Logger.WriteLog("     SamFirm.exe -file [path-to-file.zip.enc2] -version [pda/csc/phone/data]", false);
-            Logger.WriteLog("     SamFirm.exe -file [path-to-file.zip.enc4] -version [pda/csc/phone/data] -logicValue [logicValue]", false);
-            Logger.WriteLog("\nDownloading:", false);
-            Logger.WriteLog("     SamFirm.exe -model [device model] -region [region code]\n                [-version [pda/csc/phone/data]] [-folder [output folder]]\n                [-binary] [-autodecrypt]", false);
+            //Logger.WriteLog("Usage:\n", false);
+            //Logger.WriteLog("Update check:", false);
+            //Logger.WriteLog("     SamFirm.exe -c -model [device model] -region [region code]\n                [-version [pda/csc/phone/data]] [-binary]", false);
+            //Logger.WriteLog("\nDecrypting:", false);
+            //Logger.WriteLog("     SamFirm.exe -file [path-to-file.zip.enc2] -version [pda/csc/phone/data]", false);
+            //Logger.WriteLog("     SamFirm.exe -file [path-to-file.zip.enc4] -version [pda/csc/phone/data] -logicValue [logicValue]", false);
+            //Logger.WriteLog("\nDownloading:", false);
+            //Logger.WriteLog("     SamFirm.exe -model [device model] -region [region code]\n                [-version [pda/csc/phone/data]] [-folder [output folder]]\n                [-binary] [-autodecrypt]", false);
         }
 
         private static int DoCheck()
         {
             Command.Firmware firmware;
-            Logger.WriteLog("========== SamFirm Firmware Update Check ==========\n", false);
+            //Logger.WriteLog("========== SamFirm Firmware Update Check ==========\n", false);
             if (string.IsNullOrEmpty(version))
             {
                 firmware = Command.UpdateCheckAuto(model, region, binary);
@@ -74,8 +76,8 @@
 
         private static int DoDecrypt()
         {
-            Logger.WriteLog("========== SamFirm Firmware Decrypter ==========\n", false);
-            Logger.WriteLog("Decrypting file " + file + "...", false);
+            //Logger.WriteLog("========== SamFirm Firmware Decrypter ==========\n", false);
+            //Logger.WriteLog("Decrypting file " + file + "...", false);
             CreateProgressbar();
             if (file.EndsWith(".enc2"))
             {
@@ -87,12 +89,12 @@
             }
             if (Crypto.Decrypt(file, Path.GetFileNameWithoutExtension(file), false) != 0)
             {
-                Logger.WriteLog("\nError decrypting file", false);
-                Logger.WriteLog("Please make sure the filename is not modified and verify the version / logicValue argument", false);
+                //Logger.WriteLog("\nError decrypting file", false);
+                //Logger.WriteLog("Please make sure the filename is not modified and verify the version / logicValue argument", false);
                 File.Delete(Path.GetFileNameWithoutExtension(file));
                 return 3;
             }
-            Logger.WriteLog("\nDecrypting successful", false);
+            //Logger.WriteLog("\nDecrypting successful", false);
             return 0;
         }
 
@@ -100,7 +102,7 @@
         {
             Command.Firmware firmware;
             int num;
-            Logger.WriteLog("========== SamFirm Firmware Downloader ==========\n", false);
+            //Logger.WriteLog("========== SamFirm Firmware Downloader ==========\n", false);
             if (string.IsNullOrEmpty(version))
             {
                 firmware = Command.UpdateCheckAuto(model, region, binary);
@@ -118,7 +120,7 @@
                 return 2;
             }
             string saveTo = Path.Combine(folder, firmware.Filename);
-            Logger.WriteLog("Downloading...\n", false);
+            //Logger.WriteLog("Downloading...\n", false);
             CreateProgressbar();
             do
             {
@@ -129,7 +131,7 @@
             while (Utility.ReconnectDownload);
             if ((num != 200) && (num != 0xce))
             {
-                Logger.WriteLog("Error: " + num, false);
+                //Logger.WriteLog("Error: " + num, false);
                 return 4;
             }
             if (autodecrypt)
@@ -149,7 +151,7 @@
                         Crypto.SetDecryptKey(firmware.Version, firmware.LogicValueHome);
                     }
                 }
-                Logger.WriteLog("\nDecrypting...\n", false);
+                //Logger.WriteLog("\nDecrypting...\n", false);
                 CreateProgressbar();
                 fwdest = Path.Combine(Path.GetDirectoryName(saveTo), Path.GetFileNameWithoutExtension(firmware.Filename));
                 int num2 = Crypto.Decrypt(saveTo, fwdest, false);
@@ -164,7 +166,7 @@
             {
                 SaveMeta(firmware);
             }
-            Logger.WriteLog("\nFinished", false);
+            //Logger.WriteLog("\nFinished", false);
             return 0;
         }
 
@@ -172,22 +174,22 @@
         {
             if (!ParseArgs(args))
             {
-                Logger.WriteLog("Error parsing arguments\n", false);
+                //Logger.WriteLog("Error parsing arguments\n", false);
                 return false;
             }
             if (!string.IsNullOrEmpty(file) && !File.Exists(file))
             {
-                Logger.WriteLog("File " + file + " does not exist\n", false);
+                //Logger.WriteLog("File " + file + " does not exist\n", false);
                 return false;
             }
             if (!string.IsNullOrEmpty(file) && !ParseFileName())
             {
-                Logger.WriteLog("Could not parse filename. Make sure the filename was not edited\n", false);
+                //Logger.WriteLog("Could not parse filename. Make sure the filename was not edited\n", false);
                 return false;
             }
             if (!string.IsNullOrEmpty(folder) && !Directory.Exists(folder))
             {
-                Logger.WriteLog("Folder " + folder + " does not exist\n", false);
+                //Logger.WriteLog("Folder " + folder + " does not exist\n", false);
                 return false;
             }
             return true;
@@ -196,19 +198,55 @@
         public static int Main(string[] args)
         {
             Thread.Sleep(200);
-            if (!InputValidation(args))
+            MySqlConnection conn = new MySqlConnection("datasource=localhost; port=3307; database=firmware; User Id=root; password=toor");         
+            Console.WriteLine("Starting ...");
+            while (true)
             {
-                DisplayUsage();
-                return 1;
+                List<FirmwareInfo> firmwareInfos = getListFirmwareInfo(conn);
+                for(int i = 0; i < firmwareInfos.Count; i++)
+                {
+                    Console.WriteLine(firmwareInfos[i].Model);
+                    FW = Command.UpdateCheckAuto(firmwareInfos[i].Model, firmwareInfos[i].Region, false);
+                    if (!string.IsNullOrEmpty(FW.Filename))
+                    {
+                        Command.Download2(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename, true);
+                    }
+                }
+                Thread.Sleep(1000);
             }
             return ProcessAction();
         }
-
+        private static List<FirmwareInfo> getListFirmwareInfo(MySqlConnection conn)
+        {
+            List<FirmwareInfo> mylist = new List<FirmwareInfo>();
+            try
+            {
+                conn.Open();
+                string stm = "select * from firmware.firmware_info;";
+                MySqlCommand cmd = new MySqlCommand(stm, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    FirmwareInfo temp = new FirmwareInfo();
+                    temp.Id = rdr.GetInt32(0);
+                    temp.Model = rdr.GetString(1);
+                    temp.Region = rdr.GetString(2);
+                    mylist.Add(temp);
+                }
+                conn.Close();
+                return mylist;
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
+            return mylist;
+        }
         private static bool ParseArgs(string[] args)
         {
             if ((args.Length < 4) || (args.Length > 12))
             {
-                Logger.WriteLog("Error: Not enough / too many arguments", false);
+                //Logger.WriteLog("Error: Not enough / too many arguments", false);
                 return false;
             }
             for (int i = 0; i < args.Length; i++)
@@ -351,7 +389,7 @@
                 {
                     Console.CursorTop = progressBar.Line;
                     Console.CursorLeft = 1;
-                    Logger.WriteLog(new string(Utility.GetCharArray(size, '=')), true);
+                    //Logger.WriteLog(new string(Utility.GetCharArray(size, '=')), true);
                     progressBar.Progress = size;
                 }
                 Console.CursorTop = progressBar.oldLine;

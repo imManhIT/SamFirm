@@ -24,7 +24,7 @@
             }
             catch (WebException exception)
             {
-                Logger.WriteLog("Error getting response: " + exception.Message, false);
+                //Logger.WriteLog("Error getting response: " + exception.Message, false);
                 if (exception.Status == WebExceptionStatus.NameResolutionFailure)
                 {
                     Web.SetReconnect();

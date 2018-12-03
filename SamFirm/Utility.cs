@@ -1,7 +1,7 @@
 ﻿namespace SamFirm
 {
     using DamienG.Security.Cryptography;
-    using Microsoft.WindowsAPICodePack.Taskbar;
+    //using Microsoft.WindowsAPICodePack.Taskbar;
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
@@ -49,11 +49,11 @@
             switch (num)
             {
                 case 400:
-                    Logger.WriteLog("    Request was invalid. Are you sure the input data is correct?", false);
+                    //Logger.WriteLog("    Request was invalid. Are you sure the input data is correct?", false);
                     return num;
 
                 case 0x191:
-                    Logger.WriteLog("    Authorization failed", false);
+                    //Logger.WriteLog("    Authorization failed", false);
                     return num;
             }
             return num;
@@ -251,13 +251,13 @@
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += delegate (object o, DoWorkEventArgs _e) {
                 Thread.Sleep(0x3e8);
-                if (CheckConnection("cloud-neofussvr.sslcs.cdngc.net", ref ReconnectDownload))
-                {
-                    Form1.DownloadEventArgs args = new Form1.DownloadEventArgs {
-                        isReconnect = true
-                    };
-                    action(null, args);
-                }
+                //if (checkconnection("cloud-neofussvr.sslcs.cdngc.net", ref reconnectdownload))
+                //{
+                //    form1.downloadeventargs args = new form1.downloadeventargs {
+                //        isreconnect = true
+                //    };
+                //    action(null, args);
+                //}
             };
             worker.RunWorkerAsync();
         }
@@ -289,11 +289,11 @@
             {
                 if (paused)
                 {
-                    TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Paused);
+                    //TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Paused);
                 }
                 else
                 {
-                    TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
+                    //TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
                 }
             }
             catch (Exception)

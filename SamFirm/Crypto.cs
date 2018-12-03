@@ -9,7 +9,7 @@
 
     internal class Crypto
     {
-        public static Form1 form;
+        //public static Form1 form;
         private static readonly byte[] IV = new byte[1];
         private static byte[] KEY;
 
@@ -41,7 +41,7 @@
                                     stream2.Write(buffer, 0, count);
                                     if (GUI)
                                     {
-                                        form.SetProgressBar(Utility.GetProgress(num, stream.Length));
+                                        //form.SetProgressBar(Utility.GetProgress(num, stream.Length));
                                     }
                                     else
                                     {
@@ -53,17 +53,17 @@
                         }
                         catch (CryptographicException)
                         {
-                            Logger.WriteLog("Error decrypting file: Wrong key.", false);
+                            //Logger.WriteLog("Error decrypting file: Wrong key.", false);
                             return 3;
                         }
                         catch (TargetInvocationException)
                         {
-                            Logger.WriteLog("Error decrypting file: Please turn off FIPS compliance checking.", false);
+                            //Logger.WriteLog("Error decrypting file: Please turn off FIPS compliance checking.", false);
                             return 800;
                         }
                         catch (IOException exception)
                         {
-                            Logger.WriteLog("Error decrypting file: IOException: " + exception.Message, false);
+                            //Logger.WriteLog("Error decrypting file: IOException: " + exception.Message, false);
                             return 3;
                         }
                         finally

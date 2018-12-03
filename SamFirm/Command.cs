@@ -12,7 +12,7 @@
             int htmlstatus = Web.GenerateNonce();
             if (htmlstatus != 200)
             {
-                Logger.WriteLog("Error: Could not generate Nonce. Status code " + htmlstatus, false);
+                ///Logger.WriteLog("Error: Could not generate Nonce. Status code " + htmlstatus, false);
                 return -1;
             }
             htmlstatus = Web.DownloadBinaryInit(Xml.GetXmlBinaryInit(file, version, region, model_type), out str);
@@ -20,7 +20,26 @@
             {
                 return Web.DownloadBinary(path, file, saveTo, size, GUI);
             }
-            Logger.WriteLog(string.Concat(new object[] { "Error: Could not send BinaryInform. Status code ", htmlstatus, "/", Utility.GetXMLStatusCode(str) }), false);
+            //Logger.WriteLog(string.Concat(new object[] { "Error: Could not send BinaryInform. Status code ", htmlstatus, "/", Utility.GetXMLStatusCode(str) }), false);
+            Utility.CheckHTMLXMLStatus(htmlstatus, Utility.GetXMLStatusCode(str));
+            return -1;
+        }
+        public static int Download2(Command.Firmware f,string saveTo, bool GUI = true)
+        {
+            string str;
+            int htmlstatus = Web.GenerateNonce();
+            if (htmlstatus != 200)
+            {
+                //Logger.WriteLog("Error: Could not generate Nonce. Status code " + htmlstatus, false);
+                return -1;
+            }
+            htmlstatus = Web.DownloadBinaryInit(Xml.GetXmlBinaryInit(f.Filename, f.Version, f.Region, f.Model_Type), out str);
+            if ((htmlstatus == 200) && (Utility.GetXMLStatusCode(str) == 200))
+            {
+                //return Web.DownloadBinary2(f.Path, f.Filename, saveTo, f.Size, GUI);
+                return Web.DownloadBinary2(f, saveTo, GUI);
+            }
+            //Logger.WriteLog(string.Concat(new object[] { "Error: Could not send BinaryInform. Status code ", htmlstatus, "/", Utility.GetXMLStatusCode(str) }), false);
             Utility.CheckHTMLXMLStatus(htmlstatus, Utility.GetXMLStatusCode(str));
             return -1;
         }
@@ -46,18 +65,20 @@
         {
             string str;
             Firmware firmware = new Firmware();
-            Logger.WriteLog("Checking firmware for " + model + "/" + region + "/" + pda + "/" + csc + "/" + phone + "/" + data, false);
+            //Logger.WriteLog("Checking firmware for " + model + "/" + region + "/" + pda + "/" + csc + "/" + phone + "/" + data, false);
             int htmlstatus = Web.GenerateNonce();
             if (htmlstatus != 200)
             {
-                Logger.WriteLog("Error: Could not generate Nonce. Status code " + htmlstatus, false);
+                //Logger.WriteLog("Error: Could not generate Nonce. Status code " + htmlstatus, false);
                 firmware.ConnectionError = true;
                 return firmware;
             }
-            htmlstatus = Web.DownloadBinaryInform(Xml.GetXmlBinaryInform(model, region, pda, csc, phone, data, BinaryNature), out str);
+            string xml = Xml.GetXmlBinaryInform(model, region, pda, csc, phone, data, BinaryNature);
+            //Console.Write(xml.ToString());
+            htmlstatus = Web.DownloadBinaryInform(xml, out str);
             if ((htmlstatus != 200) || (Utility.GetXMLStatusCode(str) != 200))
             {
-                Logger.WriteLog(string.Concat(new object[] { "Error: Could not send BinaryInform. Status code ", htmlstatus, "/", Utility.GetXMLStatusCode(str) }), false);
+                Console.Write(string.Concat(new object[] { "Error: Could not send BinaryInform. Status code ", htmlstatus, "/", Utility.GetXMLStatusCode(str) }), false);
                 Utility.CheckHTMLXMLStatus(htmlstatus, Utility.GetXMLStatusCode(str));
                 return firmware;
             }
@@ -89,27 +110,27 @@
             {
                 if ((pda + "/" + csc + "/" + phone + "/" + pda) == firmware.Version)
                 {
-                    Logger.WriteLog("\nCurrent firmware is latest:", false);
+                    //Logger.WriteLog("\nCurrent firmware is latest:", false);
                 }
                 else
                 {
-                    Logger.WriteLog("\nNewer firmware available:", false);
+                    //Logger.WriteLog("\nNewer firmware available:", false);
                 }
             }
-            Logger.WriteLog("Model: " + firmware.Model, false);
-            Logger.WriteLog("Version: " + firmware.Version, false);
-            Logger.WriteLog("OS: " + firmware.OS, false);
-            Logger.WriteLog("Filename: " + firmware.Filename, false);
-            Logger.WriteLog("Size: " + firmware.Size + " bytes", false);
+            //Logger.WriteLog("Model: " + firmware.Model, false);
+            //Logger.WriteLog("Version: " + firmware.Version, false);
+            //Logger.WriteLog("OS: " + firmware.OS, false);
+            //Logger.WriteLog("Filename: " + firmware.Filename, false);
+            //Logger.WriteLog("Size: " + firmware.Size + " bytes", false);
             if ((firmware.BinaryNature == 1) && !string.IsNullOrEmpty(firmware.LogicValueFactory))
             {
-                Logger.WriteLog("LogicValue: " + firmware.LogicValueFactory, false);
+                //Logger.WriteLog("LogicValue: " + firmware.LogicValueFactory, false);
             }
             else if (!string.IsNullOrEmpty(firmware.LogicValueHome))
             {
-                Logger.WriteLog("LogicValue: " + firmware.LogicValueHome, false);
+                //Logger.WriteLog("LogicValue: " + firmware.LogicValueHome, false);
             }
-            Logger.WriteLog("\n", false);
+            //Logger.WriteLog("\n", false);
             return firmware;
         }
 
@@ -132,7 +153,7 @@
             }
             if (firmware.Version == null)
             {
-                Logger.WriteLog("Could not fetch info for " + model + "/" + region + ". Please verify the input or use manual info", false);
+                //Logger.WriteLog("Could not fetch info for " + model + "/" + region + ". Please verify the input or use manual info", false);
             }
             firmware.FetchAttempts = num;
             return firmware;
