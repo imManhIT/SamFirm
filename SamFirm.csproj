@@ -48,6 +48,8 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="SamFirm\Device.cs" />
+    <Compile Include="SamFirm\Csc.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="SamFirm\CmdLine.cs" />
     <Compile Include="SamFirm\Command.cs" />

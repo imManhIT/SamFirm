@@ -8,7 +8,7 @@ namespace SamFirm
     class ConnectMysql
     {       
         private string datasource = "localhost";
-        private string port = "3307";
+        private string port = "3306";
         private string database = "firmware";
         private string user = "root";
         private string pass = "toor";

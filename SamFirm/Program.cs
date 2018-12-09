@@ -27,9 +27,9 @@
                         FW = Command.UpdateCheckAuto(firmwareInfos[i].Model, firmwareInfos[i].Region, false);
                         if (!string.IsNullOrEmpty(FW.Filename))
                         {
-                            Command.Download2(FW, "C:\\Users\\chungnh\\Desktop\\FirmWare\\" + FW.Filename, true);
+                            Command.Download2(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename, true);
                             Console.WriteLine("Download finished", false);
-                            decrypt_button_Click(FW, "C:\\Users\\chungnh\\Desktop\\FirmWare\\" + FW.Filename);
+                            decrypt_button_Click(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename);
                         }
                     }
                     Thread.Sleep(1000);
@@ -101,8 +101,25 @@
             {
                 Console.Write(e);
             }
+            finally
+            {
+                conn.Close();
+            }
             return mylist;
         }
+
+        private static List<Csc> getListCsc(MySqlConnection conn)
+        {
+            List<Csc> mylist = new List<Csc>();
+            return mylist;
+        }
+
+        private static List<Device> getListDevice(MySqlConnection conn)
+        {
+            List<Device> mylist = new List<Device>();
+            return mylist;
+        }
+
         private static void SendEnterToParent()
         {
             Imports.EnumWindows(delegate (IntPtr wnd, IntPtr param) {
