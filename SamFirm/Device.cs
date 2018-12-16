@@ -15,6 +15,10 @@
             this.model = model;
         }
 
+        public Device()
+        {
+        }
+
         public int Id { get => id; set => id = value; }
         public string DeviceName { get => deviceName; set => deviceName = value; }
         public string CscCode { get => cscCode; set => cscCode = value; }

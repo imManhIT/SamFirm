@@ -21,12 +21,17 @@
                 while (true)
                 {
                     List<FirmwareInfo> firmwareInfos = getListFirmwareInfo(conn);
+                    List<FirmwareInfo> x = getFirmwareInfoFromDevice(conn);
+                    for(int i = 0; i < x.Count; i++)
+                    {
+                        Console.WriteLine(x[i].Model + "-----" + x[i].Region);
+                    }
                     for (int i = 0; i < firmwareInfos.Count; i++)
                     {
                         Console.WriteLine(firmwareInfos[i].Model);
                         FW = Command.UpdateCheckAuto(firmwareInfos[i].Model, firmwareInfos[i].Region, false);
                         if (!string.IsNullOrEmpty(FW.Filename))
-                        {
+                        {                            
                             Command.Download2(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename, true);
                             Console.WriteLine("Download finished", false);
                             decrypt_button_Click(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename);
@@ -75,6 +80,57 @@
                     Console.WriteLine("Decryption finished", false);         
                 };            
             
+        }
+
+        private static List<FirmwareInfo> getFirmwareInfoFromDevice(MySqlConnection conn)
+        {
+            List<Device> mylist = new List<Device>();
+            try
+            {
+                conn.Open();
+                string stm = "select * from firmware.device";
+                MySqlCommand cmd = new MySqlCommand(stm, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    Device temp = new Device();
+                    temp.Id = rdr.GetInt32(0);
+                    temp.DeviceName = rdr.GetString(1);
+                    temp.CscCode = rdr.GetString(2);
+                    temp.Model = rdr.GetString(3);
+                    mylist.Add(temp);
+                }
+                conn.Close();
+            }         
+            catch(Exception e)
+            {
+                Console.Write(e);
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            List<FirmwareInfo> firmwareInfos = new List<FirmwareInfo>();
+            for (int i = 0; i < mylist.Count; i++)
+            {
+                if(mylist[i].Model.Length > 4)
+                {
+                    string[] word = mylist[i].Model.Split(',');
+                    for(int j = 0; j < word.Length - 1; j++)
+                    {
+                        FirmwareInfo temp = new FirmwareInfo();
+                        temp.Model = mylist[i].CscCode;
+                        temp.Region = word[j];
+                        firmwareInfos.Add(temp);
+                    }
+                }
+                else
+                {
+                    firmwareInfos.Add(new FirmwareInfo(mylist[i].CscCode, mylist[i].Model));
+                }
+            }
+            return firmwareInfos;
         }
 
         private static List<FirmwareInfo> getListFirmwareInfo(MySqlConnection conn)
