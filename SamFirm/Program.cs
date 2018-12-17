@@ -28,13 +28,14 @@
                     }
                     for (int i = 0; i < firmwareInfos.Count; i++)
                     {
-                        Console.WriteLine(firmwareInfos[i].Model);
+                        //Console.WriteLine(firmwareInfos[i].Model);
+                        string strOutput = File.ReadAllText("OutputConfig.txt");
                         FW = Command.UpdateCheckAuto(firmwareInfos[i].Model, firmwareInfos[i].Region, false);
                         if (!string.IsNullOrEmpty(FW.Filename))
                         {                            
-                            Command.Download2(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename, true);
+                            Command.Download2(FW, strOutput + FW.Filename, true);
                             Console.WriteLine("Download finished", false);
-                            decrypt_button_Click(FW, "C:\\Users\\chungnh\\Desktop\\" + FW.Filename);
+                            decrypt_button_Click(FW, strOutput + FW.Filename);
                         }
                     }
                     Thread.Sleep(1000);
@@ -96,8 +97,8 @@
                     Device temp = new Device();
                     temp.Id = rdr.GetInt32(0);
                     temp.DeviceName = rdr.GetString(1);
-                    temp.CscCode = rdr.GetString(2);
-                    temp.Model = rdr.GetString(3);
+                    temp.Model = rdr.GetString(2);
+                    temp.CscCode = rdr.GetString(3);
                     mylist.Add(temp);
                 }
                 conn.Close();
@@ -116,18 +117,18 @@
             {
                 if(mylist[i].Model.Length > 4)
                 {
-                    string[] word = mylist[i].Model.Split(',');
+                    string[] word = mylist[i].CscCode.Split(',');
                     for(int j = 0; j < word.Length - 1; j++)
                     {
                         FirmwareInfo temp = new FirmwareInfo();
-                        temp.Model = mylist[i].CscCode;
+                        temp.Model = mylist[i].Model;
                         temp.Region = word[j];
                         firmwareInfos.Add(temp);
                     }
                 }
                 else
                 {
-                    firmwareInfos.Add(new FirmwareInfo(mylist[i].CscCode, mylist[i].Model));
+                    firmwareInfos.Add(new FirmwareInfo(mylist[i].Model, mylist[i].CscCode.Split(',')[0]));
                 }
             }
             return firmwareInfos;
