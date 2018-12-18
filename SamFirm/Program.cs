@@ -20,11 +20,11 @@
                 MySqlConnection conn = connect.Initialize();
                 while (true)
                 {
-                    List<FirmwareInfo> firmwareInfos = getListFirmwareInfo(conn);
-                    List<FirmwareInfo> x = getFirmwareInfoFromDevice(conn);
-                    for(int i = 0; i < x.Count; i++)
+                    //List<FirmwareInfo> firmwareInfos = getListFirmwareInfo(conn);
+                    List<FirmwareInfo> firmwareInfos = getFirmwareInfoFromDevice(conn);
+                    for(int i = 0; i < firmwareInfos.Count; i++)
                     {
-                        Console.WriteLine(x[i].Model + "-----" + x[i].Region);
+                        Console.WriteLine(firmwareInfos[i].Model + "-----" + firmwareInfos[i].Region);
                     }
                     for (int i = 0; i < firmwareInfos.Count; i++)
                     {
@@ -34,8 +34,9 @@
                         if (!string.IsNullOrEmpty(FW.Filename))
                         {                            
                             Command.Download2(FW, strOutput + FW.Filename, true);
-                            Console.WriteLine("Download finished", false);
                             decrypt_button_Click(FW, strOutput + FW.Filename);
+                            Console.WriteLine("Output:   " + strOutput);
+                            Console.WriteLine("--------------------------------------");
                         }
                     }
                     Thread.Sleep(1000);
@@ -53,7 +54,7 @@
         {
             if (!System.IO.File.Exists(des))
             {
-                Console.WriteLine("Error: File does not exist", false);
+                //Console.WriteLine("Error: File does not exist", false);
             }
             else
             {

@@ -25,7 +25,7 @@
             wr.Headers["Authorization"] = Imports.GetAuthorization(Nonce).Replace("Authorization: ", "").Replace("nonce=\"", "nonce=\"" + Nonce);
             String GetAuthorization = Imports.GetAuthorization(Nonce).Replace("Authorization: ", "").Replace("nonce=\"", "nonce=\"" + Nonce);
 
-            Console.WriteLine("\n" + link + "\nGetAuthorization: " + GetAuthorization);
+            //Console.WriteLine("\n" + link + "\nGetAuthorization: " + GetAuthorization);
 
             wr.Timeout = 0x61a8;
             wr.ReadWriteTimeout = 0x61a8;
@@ -207,7 +207,7 @@
             wr.Headers["Authorization"] = Imports.GetAuthorization(Nonce).Replace("Authorization: ", "").Replace("nonce=\"", "nonce=\"" + Nonce);
             String GetAuthorization = Imports.GetAuthorization(Nonce).Replace("Authorization: ", "").Replace("nonce=\"", "nonce=\"" + Nonce);
 
-            Console.WriteLine("\n" + link + "\nGetAuthorization: " + GetAuthorization);
+            //Console.WriteLine("\n" + link + "\nGetAuthorization: " + GetAuthorization);
 
             wr.Timeout = 0x61a8;
             wr.ReadWriteTimeout = 0x61a8;
